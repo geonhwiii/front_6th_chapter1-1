@@ -1,6 +1,6 @@
 import { productListLoadingTemplate, productListLoadedTemplate } from "./templates/index.js";
 import { getProducts, getCategories } from "./api/productApi.js";
-import { renderProducts, renderProductCount } from "./views/index.js";
+import { renderProducts, renderProductCount, attachProductListEvents, updateFilterStates } from "./views/index.js";
 
 const enableMocking = () =>
   import("./mocks/browser.js").then(({ worker }) =>
@@ -24,6 +24,24 @@ let productListState = {
   },
 };
 
+function handleLimitChange(newLimit) {
+  productListState.filters.limit = newLimit;
+  productListState.filters.page = 1;
+  loadProducts();
+}
+
+function handleSortChange(newSort) {
+  productListState.filters.sort = newSort;
+  productListState.filters.page = 1;
+  loadProducts();
+}
+
+function handleSearchSubmit(searchTerm) {
+  productListState.filters.search = searchTerm;
+  productListState.filters.page = 1;
+  loadProducts();
+}
+
 async function loadProducts() {
   const root = document.getElementById("root") || document.body;
   root.innerHTML = productListLoadingTemplate;
@@ -41,6 +59,10 @@ async function loadProducts() {
   root.innerHTML = productListLoadedTemplate;
   renderProducts(productListState.products);
   renderProductCount(productListState.pagination.total);
+
+  updateFilterStates(productListState.filters);
+
+  attachProductListEvents(handleLimitChange, handleSortChange, handleSearchSubmit);
 }
 
 function main() {

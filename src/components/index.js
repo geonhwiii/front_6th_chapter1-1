@@ -1,2 +1,10 @@
 export { createProductItem } from "./product-item.js";
 export { createProductCount } from "./product-count.js";
+export { createHeader } from "./header.js";
+export { createSearchFilter } from "./search-filter.js";
+export { createProductList } from "./product-list.js";
+export { createFooter } from "./footer.js";
+export { createLoadingSkeleton } from "./loading-skeleton.js";
+export { createLoadingSpinner } from "./loading-spinner.js";
+export { createProductListLoading } from "./product-list-loading.js";
+export { createSearchFilterLoading } from "./search-filter-loading.js";
