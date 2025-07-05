@@ -1,16 +1,5 @@
-import {
-  productListLoadingTemplate,
-  productListLoadedTemplate,
-  productListCategory1DepthTemplate,
-  productListCategory2DepthTemplate,
-  toastTemplate,
-  cartEmptyTemplate,
-  cartNoSelectionTemplate,
-  cartWithSelectionTemplate,
-  productDetailLoadingTemplate,
-  productDetailLoadedTemplate,
-  notFoundTemplate,
-} from "./templates/index.js";
+import { productListLoadingTemplate, productListLoadedTemplate } from "./templates/index.js";
+import { getProducts, getCategories } from "./api/productApi.js";
 
 const enableMocking = () =>
   import("./mocks/browser.js").then(({ worker }) =>
@@ -19,55 +8,42 @@ const enableMocking = () =>
     }),
   );
 
-function main() {
-  const 상품목록_레이아웃_로딩 = productListLoadingTemplate;
+let productListState = {
+  products: [],
+  categories: {},
+  loading: true,
+  pagination: {},
+  filters: {
+    page: 1,
+    limit: 20,
+    search: "",
+    category1: "",
+    category2: "",
+    sort: "price_asc",
+  },
+};
 
-  const 상품목록_레이아웃_로딩완료 = productListLoadedTemplate;
+async function loadProducts() {
+  const root = document.getElementById("root") || document.body;
+  root.innerHTML = productListLoadingTemplate;
 
-  const 상품목록_레이아웃_카테고리_1Depth = productListCategory1DepthTemplate;
+  const [productsResponse, categoriesResponse] = await Promise.all([
+    getProducts(productListState.filters),
+    getCategories(),
+  ]);
 
-  const 상품목록_레이아웃_카테고리_2Depth = productListCategory2DepthTemplate;
+  productListState.products = productsResponse.products;
+  productListState.pagination = productsResponse.pagination;
+  productListState.categories = categoriesResponse;
+  productListState.loading = false;
 
-  const 토스트 = toastTemplate;
-
-  const 장바구니_비어있음 = cartEmptyTemplate;
-
-  const 장바구니_선택없음 = cartNoSelectionTemplate;
-
-  const 장바구니_선택있음 = cartWithSelectionTemplate;
-
-  const 상세페이지_로딩 = productDetailLoadingTemplate;
-
-  const 상세페이지_로딩완료 = productDetailLoadedTemplate;
-
-  const _404_ = notFoundTemplate;
-
-  document.body.innerHTML = `
-    ${상품목록_레이아웃_로딩}
-    <br />
-    ${상품목록_레이아웃_로딩완료}
-    <br />
-    ${상품목록_레이아웃_카테고리_1Depth}
-    <br />
-    ${상품목록_레이아웃_카테고리_2Depth}
-    <br />
-    ${토스트}
-    <br />
-    ${장바구니_비어있음}
-    <br />
-    ${장바구니_선택없음}
-    <br />
-    ${장바구니_선택있음}
-    <br />
-    ${상세페이지_로딩}
-    <br />
-    ${상세페이지_로딩완료}
-    <br />
-    ${_404_}
-  `;
+  root.innerHTML = productListLoadedTemplate;
 }
 
-// 애플리케이션 시작
+function main() {
+  loadProducts();
+}
+
 if (import.meta.env.MODE !== "test") {
   enableMocking().then(main);
 } else {
