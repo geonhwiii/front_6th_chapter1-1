@@ -1,5 +1,6 @@
 import { productListLoadingTemplate, productListLoadedTemplate } from "./templates/index.js";
 import { getProducts, getCategories } from "./api/productApi.js";
+import { renderProducts, renderProductCount } from "./views/index.js";
 
 const enableMocking = () =>
   import("./mocks/browser.js").then(({ worker }) =>
@@ -38,6 +39,8 @@ async function loadProducts() {
   productListState.loading = false;
 
   root.innerHTML = productListLoadedTemplate;
+  renderProducts(productListState.products);
+  renderProductCount(productListState.pagination.total);
 }
 
 function main() {
