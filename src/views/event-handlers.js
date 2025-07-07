@@ -6,25 +6,28 @@
  */
 export function attachProductListEvents(onLimitChange, onSortChange, onSearchSubmit) {
   const limitSelect = document.querySelector("#limit-select");
-  if (limitSelect) {
+  if (limitSelect && !limitSelect.hasAttribute("data-events-attached")) {
     limitSelect.addEventListener("change", (e) => {
       onLimitChange(parseInt(e.target.value));
     });
+    limitSelect.setAttribute("data-events-attached", "true");
   }
 
   const sortSelect = document.querySelector("#sort-select");
-  if (sortSelect) {
+  if (sortSelect && !sortSelect.hasAttribute("data-events-attached")) {
     sortSelect.addEventListener("change", (e) => {
       onSortChange(e.target.value);
     });
+    sortSelect.setAttribute("data-events-attached", "true");
   }
 
   const searchInput = document.querySelector("#search-input");
-  if (searchInput) {
+  if (searchInput && !searchInput.hasAttribute("data-events-attached")) {
     searchInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
         onSearchSubmit(e.target.value);
       }
     });
+    searchInput.setAttribute("data-events-attached", "true");
   }
 }
